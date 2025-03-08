@@ -8,7 +8,7 @@ class ProgrammingInCPlusPlus extends StatelessWidget {
   final String chapter1PdfLink =
       'https://drive.google.com/file/d/1N9PhFelhRG7xJYnml5qTlzOOYP0D9LMr/view?usp=sharing';
   final String chapter1PptLink =
-      'https://drive.google.com/file/d/your_chapter1_ppt_link';
+      'https://docs.google.com/presentation/d/1NcHCgq3jfo_427hxGx_IZ80o_uq4pEfJ/edit?usp=sharing';
   final String chapter2PdfLink =
       'https://drive.google.com/file/d/your_chapter2_pdf_link';
   final String chapter2PptLink =

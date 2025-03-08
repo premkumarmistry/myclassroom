@@ -69,7 +69,10 @@ class DetailsPage extends StatelessWidget {
                     "1.",
                     "Introduction to Java",
                     "View Details",
-                    onTap: () => _navigateToSubject(context, "Introduction to Java"),
+                    onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => ProgrammingInCPlusPlus()),
+                    ),
                   ),
                   _buildTableRow(
                     context,

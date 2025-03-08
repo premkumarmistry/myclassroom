@@ -1,7 +1,25 @@
-import 'package:flutter/material.dart';
-import 'package:parikshamadadkendra/be_co_sem1.dart';
+import 'dart:async';
 
-void main() {
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/material.dart';
+import 'package:parikshamadadkendra/Choose_login.dart';
+import 'package:parikshamadadkendra/Choose_register.dart';
+import 'package:parikshamadadkendra/LoginScreen.dart';
+import 'package:parikshamadadkendra/StudentRegistrationScreen.dart';
+import 'package:parikshamadadkendra/register_or_login.dart';
+import 'package:parikshamadadkendra/role_selection_screen.dart';
+import 'package:parikshamadadkendra/splash_screen.dart';
+
+import 'dashboard_screen.dart'; // 🔹 Import Dashboard Screen
+import 'firebase_options.dart';
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+
   runApp(MyApp());
 }
 
@@ -13,214 +31,57 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  final drop_stream = ["Diploma", "Bachelors"];
-  final drop_branch = [
-    "Computer Engg",
-    "Chemical Engg",
-    "Mechanical Engg",
-    "Civil Engg"
-  ];
 
-  final drop_semester = [
-    "Semester 1",
-    "Semester 2",
-    "Semester 3",
-    "Semester 4",
-    "Semester 5",
-    "Semester 6",
-    "Semester 7",
-    "Semester 8"
-  ];
 
-  String? selected_semester = "Semester 1";
-  String? selected_branch = "Computer Engg";
-  String? selected_stream = "Diploma";
+
+
+  User? _user;
+  bool isEmailVerified = false;
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _checkAuthState();
+  }
+
+  // 🔹 Check User Authentication & Email Verification
+  void _checkAuthState() async {
+    FirebaseAuth.instance.authStateChanges().listen((User? user) async {
+      if (user != null) {
+        await user.reload(); // Refresh user data
+        setState(() {
+          _user = user;
+          isEmailVerified = user.emailVerified;
+          _isLoading = false; // Hide splash screen
+        });
+      } else {
+        setState(() {
+          _user = null;
+          isEmailVerified = false;
+        });
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: "Flutter App",
-      home: Scaffold(
-        appBar: AppBar(
-          title: const Text(
-            "Pariksha Madad Kendra",
-            style: TextStyle(color: Colors.blue),
-          ),
-        ),
-        body: Builder(
-          builder: (BuildContext context) {
-            return SingleChildScrollView(
-              child: Center(
-                child: SizedBox(
-                  child: Column(
-                    children: [
-                      const SizedBox(height: 100),
-                      SizedBox(
-                        width: 250,
-                        child: DropdownButtonFormField(
-                          value: selected_stream,
-                          items: drop_stream.map((e) {
-                            return DropdownMenuItem(
-                              value: e,
-                              child: Text(e),
-                            );
-                          }).toList(),
-                          onChanged: (val) {
-                            setState(() {
-                              selected_stream = val;
-                            });
-                          },
-                          dropdownColor: Colors.white,
-                          decoration: const InputDecoration(
-                            labelText: "Select your Stream",
-                            border: OutlineInputBorder(),
-                          ),
-                          icon: const Icon(
-                            Icons.arrow_drop_down_circle,
-                            color: Colors.deepPurple,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 25),
-                      SizedBox(
-                        width: 250,
-                        child: DropdownButtonFormField(
-                          value: selected_branch,
-                          items: drop_branch.map((w) {
-                            return DropdownMenuItem(
-                              value: w,
-                              child: Text(w),
-                            );
-                          }).toList(),
-                          onChanged: (w) {
-                            setState(() {
-                              selected_branch = w;
-                            });
-                          },
-                          dropdownColor: Colors.white,
-                          decoration: const InputDecoration(
-                            labelText: "Select your Branch",
-                            border: OutlineInputBorder(),
-                          ),
-                          icon: const Icon(
-                            Icons.arrow_drop_down_circle,
-                            color: Colors.deepPurple,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 25),
-                      SizedBox(
-                        width: 250,
-                        child: DropdownButtonFormField(
-                          value: selected_semester,
-                          items: drop_semester.map((q) {
-                            return DropdownMenuItem(
-                              value: q,
-                              child: Text(q),
-                            );
-                          }).toList(),
-                          onChanged: (q) {
-                            setState(() {
-                              selected_semester = q;
-                            });
-                          },
-                          dropdownColor: Colors.white,
-                          decoration: const InputDecoration(
-                            labelText: "Select your Semester",
-                            border: OutlineInputBorder(),
-                          ),
-                          icon: const Icon(
-                            Icons.arrow_drop_down_circle,
-                            color: Colors.deepPurple,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 25),
-                      TextButton(
-                        onPressed: () {
-                          print("Hello");
-                          if (selected_stream == "Bachelors" &&
-                              selected_semester == "Semester 5" &&
-                              selected_branch == "Computer Engg") {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(builder: (context) => DetailsPage()),
-                            );
-                          } else {
-                            print("Maa chuda");
-                          }
-
-                        },
-                        style: TextButton.styleFrom(
-                          backgroundColor: Colors.white,
-                          padding: EdgeInsets.all(16), // Add some padding
-                          shape: RoundedRectangleBorder(
-                            side: BorderSide(color: Colors.black, width: 2),
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                        ),
-                        child: Text("Submit"),
-                      ),
-                      const SizedBox(height: 100),
-                    /*  GestureDetector(
-                        onTap: () {
-                          if (selected_stream == "Bachelors" &&
-                              selected_semester == "Semester 5" &&
-                              selected_branch == "Computer Engg") {
-                            print("Success");
-                          } else {
-                            print("Maa chuda");
-                          }
-                        },
-                        child: Text(
-                          "Semester 1",
-                          style: TextStyle(
-                            fontSize: 18,
-                            color: Colors.black,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),*/
-                      const SizedBox(height: 20),
-                     /* Container(
-                        width: 400,
-                        child: Table(
-                          textDirection: TextDirection.rtl,
-                          defaultVerticalAlignment: TableCellVerticalAlignment.bottom,
-                          border: TableBorder.all(width: 2.0, color: Colors.black),
-                          children: [
-                            TableRow(children: [
-                              Text(" Contents", textScaleFactor: 1.5),
-                              Text(" Subject Name", textScaleFactor: 1.5),
-                              Text(" Sr no.", textScaleFactor: 1.5),
-                            ]),
-                            TableRow(children: [
-                              Text(" N/A", textScaleFactor: 1.5),
-                              Text(" Introduction to \n java", textScaleFactor: 1.5),
-                              Text(" 1.", textScaleFactor: 1.5),
-                            ]),
-                            TableRow(children: [
-                              Text(" N/A", textScaleFactor: 1.5),
-                              Text(" Python \n Programming", textScaleFactor: 1.5),
-                              Text(" 2.", textScaleFactor: 1.5),
-                            ]),
-                            TableRow(children: [
-                              Text(" N/A", textScaleFactor: 1.5),
-                              Text(" Data \n Mining", textScaleFactor: 1.5),
-                              Text(" 3.", textScaleFactor: 1.5),
-                            ]),
-                          ],
-                        ),
-                      ),*/
-                      const SizedBox(height: 20),
-                    ],
-                  ),
-                ),
-              ),
-            );
-          },
-        ),
-      ),
+      title: "Pariksha Madad Kendra",
+      debugShowCheckedModeBanner: false,
+      home: SplashScreen(),
+      /* _user == null
+          ? RegisterOrLoginScreen() // 🔹 Show Register/Login Options
+          : isEmailVerified
+          ? MainDashboard() // 🔹 Redirect to Dashboard
+          : RoleSelectionScreen(), */// 🔹 Force Login if not verified
+      routes: {
+        '/register': (context) => ChooseRegister(),
+        '/dashboard': (context) => DashboardScreen(),
+        '/login': (context) => ChooseLogin(),
+      },
     );
   }
 }
+
+
