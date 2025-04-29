@@ -1,22 +1,7 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <script type="application/javascript" src="/assets/packages/flutter_inappwebview/assets/web/web_support.js" defer></script>
-
-  <!--
-    If you are serving your web app in a path other than the root, change the
-    href value below to reflect the base path you are serving from.
-
-    The path provided below has to start and end with a slash "/" in order for
-    it to work correctly.
-
-    For more details:
-    * https://developer.mozilla.org/en-US/docs/Web/HTML/Element/base
-
-    This is a placeholder for base href that will be replaced by the value of
-    the `--base-href` argument provided to `flutter build`.
-  -->
-
+  <!-- Meta Tags -->
   <meta charset="UTF-8">
   <meta content="IE=Edge" http-equiv="X-UA-Compatible">
   <meta name="description" content="A new Flutter project.">
@@ -24,18 +9,33 @@
   <!-- iOS meta tags & icons -->
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
-  <meta name="apple-mobile-web-app-title" content="parikshamadadkendra">
+  <meta name="apple-mobile-web-app-title" content="MyClassroom">
   <link rel="apple-touch-icon" href="icons/Icon-192.png">
 
   <!-- Favicon -->
   <link rel="icon" type="image/png" href="favicon.png"/>
 
+  <!-- Title of the Page -->
   <title>MyClassroom</title>
+
+  <!-- Manifest for PWA -->
   <link rel="manifest" href="manifest.json">
+
+  <!-- Web support script -->
+  <script type="application/javascript" src="/assets/packages/flutter_inappwebview/assets/web/web_support.js" defer></script>
 </head>
 <body>
-<script type="application/javascript" src="/assets/packages/flutter_inappwebview/assets/web/web_support.js" defer></script>
+<!-- Page Content -->
 
-  <script src="flutter_bootstrap.js" async></script>
+<!-- Flutter Bootstrap -->
+<script src="flutter_bootstrap.js" async></script>
+
+<!-- Enforce title setting using JavaScript -->
+<script>
+  // Forcefully set the title if any other script tries to override it
+  window.addEventListener('load', () => {
+    document.title = "MyClassroom";
+  });
+</script>
 </body>
 </html>

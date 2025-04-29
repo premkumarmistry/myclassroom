@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1062358116698",
+    "project_id": "myclassroom-3996f",
+    "storage_bucket": "myclassroom-3996f.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1062358116698:android:ccef84d9f77220269e2b63",
+        "android_client_info": {
+          "package_name": "prem.dev.parikshamadadkendra.parikshamadadkendra"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAyWZOeT1a9AgsGmr74FgUt2pi7BWNQGvQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

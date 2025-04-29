@@ -12,6 +12,8 @@ import 'package:parikshamadadkendra/splash_screen.dart';
 import 'package:parikshamadadkendra/dashboard_screen.dart';
 import 'package:parikshamadadkendra/firebase_options.dart';
 
+import 'auth_handler.dart';
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
@@ -35,37 +37,23 @@ class _MyAppState extends State<MyApp> {
   User? _user;
   bool isEmailVerified = false;
   bool _isLoading = true;
-  late Stream<User?> _authStateChanges;
 
   @override
   void initState() {
     super.initState();
-    _authStateChanges = FirebaseAuth.instance.authStateChanges();
-    _checkAuthState();
-  }
-
-  void _checkAuthState() async {
-    _authStateChanges.listen((User? user) async {
-      if (user != null) {
-        await user.reload();
-        setState(() {
+    // Check the current user when the app initializes
+    FirebaseAuth.instance.authStateChanges().listen((User? user) {
+      setState(() {
+        if (user != null) {
           _user = user;
           isEmailVerified = user.emailVerified;
-          _isLoading = false;
-        });
-      } else {
-        setState(() {
+        } else {
           _user = null;
           isEmailVerified = false;
-          _isLoading = false;
-        });
-      }
+        }
+        _isLoading = false;  // Stop the loading indicator
+      });
     });
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
   }
 
   @override
@@ -73,16 +61,16 @@ class _MyAppState extends State<MyApp> {
     return Consumer<ThemeProvider>(
       builder: (context, themeProvider, child) {
         return MaterialApp(
-          title: "Pariksha Madad Kendra",
+          title: "MyClassroom",
           debugShowCheckedModeBanner: false,
           theme: themeProvider.themeData,  // Apply dynamic theme
           home: _isLoading
-              ? SplashScreen()
+              ? SplashScreen()  // Show SplashScreen while loading
               : _user == null
-              ? RegisterOrLoginScreen()
+              ? RegisterOrLoginScreen()  // Redirect to login if no user is found
               : isEmailVerified
-              ? DashboardScreen()
-              : ChooseLogin(),
+              ? AuthHandler()  // Show dashboard if user is logged in and verified
+              : ChooseLogin(),  // Ask to verify email if user is logged in but not verified
           routes: {
             '/register': (context) => ChooseRegister(),
             '/dashboard': (context) => DashboardScreen(),

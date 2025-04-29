@@ -43,7 +43,7 @@ dependencies:
   path_provider: ^2.1.5
   flutter_svg: ^0.22.0 # For social media SVG icons
   flutter_social_button: ^1.1.6+1 # Add this dependency
-
+  modal_bottom_sheet: ^3.0.0
   shared_preferences: ^2.3.3
   provider: ^6.1.2
   marquee: ^2.2.3
