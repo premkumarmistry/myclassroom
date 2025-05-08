@@ -61,3 +61,7 @@ android {
 flutter {
     source = "../.."
 }
+dependencies {
+    implementation 'com.google.firebase:firebase-messaging:24.1.1' // ✅ Firebase Messaging
+    implementation 'androidx.core:core:1.8.0' // ✅ For notification compatibility
+}

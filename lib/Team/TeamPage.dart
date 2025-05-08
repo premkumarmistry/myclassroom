@@ -9,15 +9,15 @@ class TeamPage extends StatelessWidget {
       name: "Premkumar Mistry",
       email: "premsahebrajmistry@gmail.com",
       description: "A passionate Flutter developer with a knack for UI design.",
-      imageUrl: "https://randomuser.me/api/portraits/men/1.jpg", // Example image URL
-      linkedinUrl: "https://www.linkedin.com/in/johndoe/",
-      githubUrl: "https://github.com/johndoe",
+      imageUrl: "assets/premone.png", // Example image URL
+      linkedinUrl: "https://in.linkedin.com/in/premmistry",
+      githubUrl: "https://github.com/premkumarmistry",
     ),
     TeamMember(
       name: "Hirenkumar Vasava",
       email: "hirenvasava@gmail.com",
       description: "Full-stack developer with experience in  Nextjs and cloud computing.",
-      imageUrl: "https://randomuser.me/api/portraits/women/1.jpg", // Example image URL
+      imageUrl: "assets/hiren.png", // Example image URL
       linkedinUrl: "https://www.linkedin.com/in/janesmith/",
       githubUrl: "https://github.com/janesmith",
     ),
@@ -25,7 +25,7 @@ class TeamPage extends StatelessWidget {
       name: "Yakulkumar Vasava",
       email: "yakulkumarvasava@gmail.com",
       description: "Mobile app developer with a focus on Flutter and Android.",
-      imageUrl: "https://randomuser.me/api/portraits/women/2.jpg", // Example image URL
+      imageUrl: "assets/yakul.png", // Example image URL
       linkedinUrl: "https://www.linkedin.com/in/alicejohnson/",
       githubUrl: "https://github.com/alicejohnson",
     ),
@@ -33,7 +33,7 @@ class TeamPage extends StatelessWidget {
       name: "Ravishankar Wakode",
       email: "Ravishankarwakode@gmail.com",
       description: "Backend developer specializing in Node.js and databases.",
-      imageUrl: "https://randomuser.me/api/portraits/men/2.jpg", // Example image URL
+      imageUrl: "assets/ravi.png", // Example image URL
       linkedinUrl: "https://www.linkedin.com/in/bobbrown/",
       githubUrl: "https://github.com/bobbrown",
     ),
@@ -113,12 +113,16 @@ class TeamMemberCard extends StatelessWidget {
             // Profile image
             ClipRRect(
               borderRadius: BorderRadius.circular(50),
-              child: Image.network(
-                teamMember.imageUrl,
-                height: 80,
-                width: 80,
-                fit: BoxFit.cover,
-              ),
+              child:   Image.asset(
+                  '${teamMember.imageUrl}',
+                  height: 80,
+                  width: 80,
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) {
+                    return Icon(Icons.error, color: Colors.red); // fallback if image fails
+                  },
+                )
+
             ),
             SizedBox(width: 16),
             Expanded(

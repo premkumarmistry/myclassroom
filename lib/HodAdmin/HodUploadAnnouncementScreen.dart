@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
@@ -17,10 +18,38 @@ class _HodUploadAnnouncementScreenState extends State<HodUploadAnnouncementScree
   final TextEditingController titleController = TextEditingController();
   final TextEditingController descriptionController = TextEditingController();
   String selectedPriority = "General";
+  String selectedUser = "Student";
   bool isEnabled = true;
   File? selectedFile;
   String? attachmentUrl;
   bool isUploading = false;
+  String hodDepartment = "Department";
+
+  @override
+  void initState() {
+    super.initState();
+    fetchHodDetails();
+    //setGreetingMessage();
+  }
+  void fetchHodDetails() async {
+    User? user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      DocumentSnapshot hodDoc = await FirebaseFirestore.instance.collection(
+          "hods").doc(user.uid).get();
+      if (hodDoc.exists) {
+        setState(() {
+
+         // hodName = hodDoc["name"] ?? "HOD";
+          hodDepartment = hodDoc["department"] ?? "Department";
+          showToast(hodDepartment, Colors.red);
+        });
+      }
+    }
+  }
+
+
+
+
 
   /// **🔹 Pick File**
   Future<void> pickFile() async {
@@ -75,6 +104,8 @@ class _HodUploadAnnouncementScreenState extends State<HodUploadAnnouncementScree
         "priority": selectedPriority,
         "attachment_url": fileUrl ?? "", // Save only if file is uploaded
         "enabled": isEnabled,
+        "sendto": selectedUser,
+        "department" :hodDepartment ,
       });
 
       // Reset UI after success
@@ -153,10 +184,10 @@ class _HodUploadAnnouncementScreenState extends State<HodUploadAnnouncementScree
 
                   // 🔹 Description Input
                   buildTextField("Description", descriptionController, Icons.description, maxLines: 3),
-
+                  //buildUserSelectionDropdown(),
                   // 🔹 Priority Dropdown
                   buildPriorityDropdown(),
-
+                  buildUserSelectionDropdown(),
                   // 🔹 Enable/Disable Switch
                   buildEnableSwitch(),
 
@@ -225,6 +256,12 @@ class _HodUploadAnnouncementScreenState extends State<HodUploadAnnouncementScree
     );
   }
 
+
+
+
+
+
+
   /// **🔹 Enable/Disable Toggle**
   Widget buildEnableSwitch() {
     return Row(
@@ -239,6 +276,29 @@ class _HodUploadAnnouncementScreenState extends State<HodUploadAnnouncementScree
       ],
     );
   }
+
+
+
+  Widget buildUserSelectionDropdown() {
+    return Padding(
+      padding: EdgeInsets.symmetric(vertical: 8.0),
+      child: DropdownButtonFormField<String>(
+        value: selectedUser,
+        items: [
+          DropdownMenuItem(value: "Student", child: Text("🎓 Student" ,style: TextStyle(color: Colors.green))),
+          DropdownMenuItem(value: "Teacher", child: Text("👩‍🏫 Teacher", style: TextStyle(color: Colors.green))),
+        ],
+        onChanged: (val) => setState(() => selectedUser = val!),
+        decoration: InputDecoration(
+          labelText: "Send To",
+          border: OutlineInputBorder(),
+        ),
+      ),
+    );
+  }
+
+
+
 
   /// **🔹 File Upload Section**
   Widget buildFileUploadSection() {
@@ -262,5 +322,22 @@ class _HodUploadAnnouncementScreenState extends State<HodUploadAnnouncementScree
 
       ],
     );
+  }
+}
+Future<void> saveTokenToFirestore(String token) async {
+  User? user = FirebaseAuth.instance.currentUser;
+
+  if (user == null) {
+    print('No user is currently signed in.');
+    return;
+  }
+
+  try {
+    await FirebaseFirestore.instance.collection('hods').doc(user.uid).update({
+      'targetFcmToken': token,
+    });
+    print('Token saved successfully!');
+  } catch (e) {
+    print('Error saving token: $e');
   }
 }

@@ -1,3 +1,4 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -24,13 +25,56 @@ class _HodDashboardState extends State<HodDashboard> {
   String hodName = "HOD";
   String hodDepartment = "Department";
   String greetingMessage = "Welcome!";
+  final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
   @override
   void initState() {
     super.initState();
     fetchHodDetails();
     setGreetingMessage();
+    _getFCMToken();
+    subscribeToTopic();
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      if (message.notification != null) {
+        // Show a snackbar or dialog
+        showForegroundNotification(message.notification!.title, message.notification!.body);
+      }
+    });
   }
+  void showForegroundNotification(String? title, String? body) {
+    final context = navigatorKey.currentContext;
+    if (context == null) return;
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('$title\n$body'),
+        duration: Duration(seconds: 5),
+        backgroundColor: Colors.blue,
+      ),
+    );
+  }
+
+
+  Future<void> _getFCMToken() async {
+    // Get the FCM token
+    String? token = await FirebaseMessaging.instance.getToken();
+
+    // Show the token in a toast
+
+
+    // Print the token in the console
+    print("FCM Token: $token");
+
+
+    saveTokenToFirestore(token!);
+  }
+
+
+
+
+
+
+
 
   /// **🔹 Fetch HOD Details (Name & Department)**
   void fetchHodDetails() async {
@@ -323,4 +367,33 @@ Future<bool> _showLogoutConfirmationDialog(BuildContext context) async {
     ),
   ) ??
       false;
+}
+
+// Function to save the FCM token in Firestore
+Future<void> saveTokenToFirestore(String token) async {
+  User? user = FirebaseAuth.instance.currentUser;
+
+  if (user == null) {
+    print('No user is currently signed in.');
+    return;
+  }
+
+  try {
+    await FirebaseFirestore.instance.collection('hods').doc(user.uid).update({
+      'fcm': token,
+    });
+    print('Token saved successfully!');
+  } catch (e) {
+    print('Error saving token: $e');
+  }
+}
+void subscribeToTopic() async {
+  FirebaseMessaging messaging = FirebaseMessaging.instance;
+
+  // Replace with your topic name
+  String topic = "Student";
+
+  // Subscribe to the topic
+  await messaging.subscribeToTopic(topic);
+  print("Subscribed to topic: $topic");
 }

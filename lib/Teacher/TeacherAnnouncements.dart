@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
@@ -6,15 +7,28 @@ import 'package:parikshamadadkendra/theme.dart';
 import 'package:provider/provider.dart';
 import 'package:url_launcher/url_launcher.dart'; // 📅 For Date Formatting
 
-class StudentAnnouncementsScreen extends StatefulWidget {
+
+
+
+
+
+
+
+
+
+
+
+
+class TeacherAnnouncementScreen extends StatefulWidget {
+
 
 
 
   @override
-  _StudentAnnouncementsScreenState createState() => _StudentAnnouncementsScreenState();
+  _TeacherAnnouncementScreenState createState() => _TeacherAnnouncementScreenState();
 }
 
-class _StudentAnnouncementsScreenState extends State<StudentAnnouncementsScreen> {
+class _TeacherAnnouncementScreenState extends State<TeacherAnnouncementScreen> {
   String teacherEmail = FirebaseAuth.instance.currentUser?.email ?? "";
   String? assignedBranch;
   List<String> assignedSubjects = [];
@@ -24,7 +38,7 @@ class _StudentAnnouncementsScreenState extends State<StudentAnnouncementsScreen>
   @override
   void initState() {
     super.initState();
-    fetchHodDetails();
+fetchHodDetails();
 
   }
 
@@ -33,11 +47,11 @@ class _StudentAnnouncementsScreenState extends State<StudentAnnouncementsScreen>
     User? user = FirebaseAuth.instance.currentUser;
     if (user != null) {
       DocumentSnapshot hodDoc = await FirebaseFirestore.instance
-          .collection("students")
+          .collection("teachers")
           .doc(user.uid)
           .get();
       if (hodDoc.exists) {
-        String fetchedDept = hodDoc["specialization"] ?? "Department";
+        String fetchedDept = hodDoc["department"] ?? "Department";
 
         print("Fetched department: $fetchedDept");
 
@@ -56,18 +70,19 @@ class _StudentAnnouncementsScreenState extends State<StudentAnnouncementsScreen>
 
 
 
-
-
-
-
-
-
-
-
   @override
   Widget build(BuildContext context) {
     print("📡 Fetching Announcements..."); // Debug message
     final theme = Theme.of(context);
+
+
+
+
+
+
+
+
+
 
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
@@ -94,12 +109,15 @@ class _StudentAnnouncementsScreenState extends State<StudentAnnouncementsScreen>
         ],
       ),
       body: StreamBuilder<QuerySnapshot>(
+
+
+
         stream: FirebaseFirestore.instance
             .collection("announcements")
             .where("enabled", isEqualTo: true)
-            .where("sendto", isEqualTo: "Student")
+            .where("sendto", isEqualTo: "Teacher") // 🔹 Fetch only active announcements
             .where("department", isEqualTo: hodDepartment) // 🔹 Fetch only active announcements
-// 🔹 Fetch only active announcements
+
             .orderBy("date", descending: true) // 🔹 Show latest first
             .snapshots(),
         builder: (context, snapshot) {

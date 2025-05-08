@@ -260,6 +260,8 @@ class _UploadMaterialScreenState extends State<UploadMaterialScreen> {
                 SizedBox(height: 20),
 
                 DropdownButtonFormField(
+                 key: Key("dropdownSubject"),
+
                   value: selectedSubject,
                   items: widget.assignedSubjects.map((s) => DropdownMenuItem(value: s, child: Text(s))).toList(),
                   onChanged: (val) {
@@ -270,6 +272,7 @@ class _UploadMaterialScreenState extends State<UploadMaterialScreen> {
                     });
                   },
                   decoration: InputDecoration(
+
                     labelText: "Select Subject",
                     labelStyle: TextStyle(
                       fontSize: 14,fontWeight: FontWeight.bold,
@@ -289,6 +292,7 @@ class _UploadMaterialScreenState extends State<UploadMaterialScreen> {
                   children: [
                     Expanded(
                       child: DropdownButtonFormField(
+                        key : Key("dropdownFolder"),
                         value: selectedFolder,
                         items: folders.map((f) => DropdownMenuItem(value: f, child: Text(f))).toList(),
                         onChanged: (val) => setState(() => selectedFolder = val),
@@ -318,6 +322,8 @@ class _UploadMaterialScreenState extends State<UploadMaterialScreen> {
                 SizedBox(height: 20),
 
                 ElevatedButton.icon(
+                  key: Key("btnSelectFiles"), // ✅ Add this key
+
                   icon: Icon(Icons.folder_open),
                   label: Text("Select Files"),
                   onPressed: pickFiles,
@@ -337,6 +343,8 @@ class _UploadMaterialScreenState extends State<UploadMaterialScreen> {
                 SizedBox(height: 10),
 
                 ElevatedButton.icon(
+                  key : Key("uploadButton"),
+
                   icon: Icon(Icons.upload),
                   label: isUploading ? CircularProgressIndicator(color: Colors.white) : Text("Upload Files"),
                   onPressed: uploadFiles,

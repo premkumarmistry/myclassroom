@@ -1,3 +1,4 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -6,6 +7,7 @@ import 'package:parikshamadadkendra/ForgotPasswordScreen.dart';
 import 'package:parikshamadadkendra/HodAdmin/StudentListScreen.dart';
 import 'package:parikshamadadkendra/Teacher/ManageFoldersScreen.dart';
 import 'package:parikshamadadkendra/Teacher/RemoveDocumentsScreen.dart';
+import 'package:parikshamadadkendra/Teacher/TeacherAnnouncements.dart';
 import 'package:parikshamadadkendra/Teacher/UploadMaterialScreen.dart';
 import 'package:provider/provider.dart';
 import '../theme.dart';
@@ -21,11 +23,15 @@ class _TeacherDashboardState extends State<TeacherDashboard> {
   String teacherEmail = FirebaseAuth.instance.currentUser?.email ?? "";
   String? assignedBranch;
   List<String> assignedSubjects = [];
-
+  String hodName = "HOD";
+  String hodDepartment = "Department";
+  String greetingMessage = "Welcome!";
   @override
   void initState() {
     super.initState();
     fetchTeacherDetails();
+    subscribeToTopic();
+
   }
 
   /// **🔹 Fetch Teacher's Assigned Branch & Subjects**
@@ -56,10 +62,32 @@ class _TeacherDashboardState extends State<TeacherDashboard> {
       print("❌ Error fetching teacher details: $e");
     }
   }
+  void subscribeToTopic() async {
+    FirebaseMessaging messaging = FirebaseMessaging.instance;
+
+    // Replace with your topic name
+    String topic = "Teacher";
+
+    // Subscribe to the topic
+    await messaging.subscribeToTopic(topic);
+    showToast("Subscribed to topic: $topic", Colors.green);
+  }
+  void showToast(String message, Color color) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message, style: TextStyle(color: Colors.white)),
+        backgroundColor: color,
+        duration: Duration(seconds: 2),
+        behavior: SnackBarBehavior.floating,
+        margin: EdgeInsets.only(bottom: 600, left: 10, right: 10),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    key: Key("teacherDashboardScreen");
 
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
@@ -120,7 +148,20 @@ class _TeacherDashboardState extends State<TeacherDashboard> {
                 );
               },
             ),
+            SizedBox(height: 20),
 
+            // 🔹 View Enrolled Students
+            buildDashboardCard(
+              title: "Announcements",
+              icon: Icons.announcement_rounded,
+              color: Colors.orangeAccent,
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => TeacherAnnouncementScreen()),
+                );
+              },
+            ),
             SizedBox(height: 20),
 
             // 🔹 View Enrolled Students

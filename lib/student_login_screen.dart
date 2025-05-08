@@ -61,6 +61,8 @@ class _StudentLoginScreenState extends State<StudentLoginScreen> {
     final theme = Theme.of(context);
 
     return Scaffold(
+      key: Key("dashboardScreen"),
+
       backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
         title: Text("Student Login", style: TextStyle(color: Colors.white)),

@@ -41,13 +41,18 @@ dependencies:
   shimmer: ^3.0.0
   flutter_pdfview: ^1.4.0
   path_provider: ^2.1.5
-  flutter_svg: ^0.22.0 # For social media SVG icons
+  flutter_svg: ^2.1.0 # For social media SVG icons
   flutter_social_button: ^1.1.6+1 # Add this dependency
   modal_bottom_sheet: ^3.0.0
   shared_preferences: ^2.3.3
   provider: ^6.1.2
   marquee: ^2.2.3
   intl: ^0.20.2
+  firebase_messaging: ^15.2.5
+  flutter_local_notifications: ^16.1.0
+  mockito: ^5.4.2
+  build_runner: ^2.4.6
+
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.6
@@ -55,6 +60,13 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  firebase_core: any
+  firebase_auth: any
+  cloud_firestore: any
+  mockito: ^5.4.0
+  build_runner: ^2.4.6
+  firebase_auth_mocks: ^0.14.1
+  fake_cloud_firestore: ^3.1.0
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
@@ -62,7 +74,10 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^4.0.0
-
+  test: ^1.25.2
+  mocktail: ^1.0.0
+  integration_test:
+    sdk: flutter
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 

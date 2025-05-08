@@ -26,6 +26,17 @@
 </head>
 <body>
 <!-- Page Content -->
+<script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('firebase-messaging-sw.js')
+      .then((registration) => {
+        console.log('✅ Service Worker registered:', registration);
+      }).catch((err) => {
+        console.error('❌ Service Worker registration failed:', err);
+      });
+  }
+</script>
+
 
 <!-- Flutter Bootstrap -->
 <script src="flutter_bootstrap.js" async></script>
@@ -37,5 +48,51 @@
     document.title = "MyClassroom";
   });
 </script>
+
+<script>
+  // Your config
+  const firebaseConfig = {
+    apiKey: 'AIzaSyAyWZOeT1a9AgsGmr74FgUt2pi7BWNQGvQ',
+    authDomain: 'myclassroom-3996f.firebaseapp.com',
+    projectId: 'myclassroom-3996f',
+    storageBucket: 'myclassroom-3996f.firebasestorage.app',
+    messagingSenderId: '1062358116698',
+    appId: '1:1062358116698:ios:4176b88427980f289e2b63',
+    measurementId: 'G-Y0Y1RV8C1X',
+    vapidKey: "BF6F1N598_99wKi7ZMKnmwWet5B1uFHKa9QmzE7FoOe5OTBFt1exzkTs3J2CvrbSj4HLwho7Pv1DLi5onUK4JMo"
+  };
+
+  // Initialize Firebase
+  firebase.initializeApp(firebaseConfig);
+
+  // Get Messaging instance
+  const messaging = firebase.messaging();
+
+  // Request permission
+  messaging.requestPermission()
+    .then(() => {
+      console.log("🔔 Notification permission granted.");
+      return messaging.getToken({ vapidKey: firebaseConfig.vapidKey });
+    })
+    .then((token) => {
+      console.log("✅ FCM Token:", token);
+      // Send this token to your backend if needed
+    })
+    .catch((err) => {
+      console.error("⚠️ Permission denied", err);
+    });
+
+  // Foreground message handler
+  messaging.onMessage((payload) => {
+    console.log('📩 Message received:', payload);
+    // You can also show a custom popup here
+    alert(`🔔 ${payload.notification.title}\n${payload.notification.body}`);
+  });
+</script>
+
+
+
+
+
 </body>
 </html>

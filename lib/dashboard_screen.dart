@@ -7,6 +7,22 @@ import 'package:parikshamadadkendra/StudentViewMaterials.dart';
 import 'package:parikshamadadkendra/choose_login.dart';
 import 'package:parikshamadadkendra/theme.dart';
 import 'package:provider/provider.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+
+final fcm = FirebaseMessaging.instance;
+
+
+
+
+
+
+
+
+
+
+String hodDepartment = "Department";
+
+
 
 class DashboardScreen extends StatefulWidget {
   @override
@@ -20,8 +36,75 @@ class _DashboardScreenState extends State<DashboardScreen> {
   @override
   void initState() {
     super.initState();
+
     fetchAnnouncement();
+    _getFCMToken();
+    //fetchHodDetails();
+   subscribeToTopic();
+
   }
+
+  Future<void> fetchHodDetails() async {
+    User? user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      DocumentSnapshot hodDoc = await FirebaseFirestore.instance.collection(
+          "students").doc(user.uid).get();
+      if (hodDoc.exists) {
+        setState(() {
+
+          // hodName = hodDoc["name"] ?? "HOD";
+          hodDepartment = hodDoc["specialization"] ?? "Department";
+          //subscribeToTopic();
+        //  showToast(hodDepartment, Colors.red);
+        });
+      }
+    }
+  }
+
+  void subscribeToTopic() async {
+    FirebaseMessaging messaging = FirebaseMessaging.instance;
+
+    // Replace with your topic name
+    String topic = "Student";
+
+    // Subscribe to the topic
+    await messaging.subscribeToTopic(topic);
+    showToast("Subscribed to topic: $topic", Colors.green);
+  }
+
+
+
+
+  /// **🔹 Show Toast Message**
+  void showToast(String message, Color color) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(message, style: TextStyle(color: Colors.white)),
+        backgroundColor: color,
+        duration: Duration(seconds: 2),
+        behavior: SnackBarBehavior.floating,
+        margin: EdgeInsets.only(bottom: 600, left: 10, right: 10),
+      ),
+    );
+  }
+
+
+  Future<void> _getFCMToken() async {
+    // Get the FCM token
+    String? token = await FirebaseMessaging.instance.getToken();
+
+    // Show the token in a toast
+
+
+    // Print the token in the console
+    print("FCM Token: $token");
+  }
+
+
+
+
+
+
 
   /// 🔹 Fetch Announcement from Firestore
   Future<void> fetchAnnouncement() async {
@@ -45,6 +128,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
     final theme = Theme.of(context);
 
     return Scaffold(
+      key: Key('dashboardScreen'), // 👈 Add this line
+
       backgroundColor: theme.scaffoldBackgroundColor,
 
       appBar: AppBar(

@@ -3,7 +3,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:parikshamadadkendra/subjects_screen.dart';
 import 'package:provider/provider.dart';
-
 import 'theme.dart';
 
 class Studentviewmaterials extends StatefulWidget {
@@ -27,7 +26,6 @@ class _MainDashboardState extends State<Studentviewmaterials> {
     fetchDropdownData();
   }
 
-  /// *🔹 Fetch Dropdown Values from Firestore*
   Future<void> fetchDropdownData() async {
     FirebaseFirestore firestore = FirebaseFirestore.instance;
 
@@ -48,7 +46,6 @@ class _MainDashboardState extends State<Studentviewmaterials> {
         isLoading = false;
       });
 
-      // Debugging prints
       print("✅ Streams: $dropStream");
       print("✅ Branches: $dropBranch");
       print("✅ Semesters: $dropSemester");
@@ -58,12 +55,12 @@ class _MainDashboardState extends State<Studentviewmaterials> {
     }
   }
 
-  /// *🔹 Show BottomSheet for Dropdown Selection*
-  void showDropdownBottomSheet(
-      {required String title,
-        required List<String> items,
-        required String? selectedValue,
-        required Function(String) onSelected}) {
+  void showDropdownBottomSheet({
+    required String title,
+    required List<String> items,
+    required String? selectedValue,
+    required Function(String) onSelected,
+  }) {
     if (items.isEmpty) {
       showToast("No data found for $title", Colors.red);
       return;
@@ -102,7 +99,6 @@ class _MainDashboardState extends State<Studentviewmaterials> {
     );
   }
 
-  /// *🔹 Show Toast Message*
   void showToast(String message, Color color) {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       content: Text(message, style: TextStyle(color: Colors.white)),
@@ -113,130 +109,123 @@ class _MainDashboardState extends State<Studentviewmaterials> {
 
   @override
   Widget build(BuildContext context) {
-
     final theme = Theme.of(context);
 
-
-    return Scaffold(
-      backgroundColor: theme.scaffoldBackgroundColor,
-
-      appBar: AppBar(
-        title: const Text(
-          "View Materials",
-          style: TextStyle(color: Colors.white, fontSize: 20),
-        ),
-        backgroundColor: theme.appBarTheme.backgroundColor,
-
-        centerTitle: true,
-        actions: [
-          /*IconButton(
-            icon: Icon(Icons.logout),
-            onPressed: () async {
-              await FirebaseAuth.instance.signOut();
-              Navigator.pushReplacementNamed(context, '/login');
-            },
-          ),*/
-
-          IconButton(
-            icon: Icon(
-              Provider.of<ThemeProvider>(context).themeData.brightness == Brightness.dark
-                  ? Icons.wb_sunny // Sun for Light Mode
-                  : Icons.nightlight_round, // Moon for Dark Mode
-              color: Colors.white,
+    return KeyedSubtree(
+      key: Key("studentViewMaterialScreen"),
+      child: Scaffold(
+        backgroundColor: theme.scaffoldBackgroundColor,
+        appBar: AppBar(
+          title: const Text(
+            "View Materials",
+            style: TextStyle(color: Colors.white, fontSize: 20),
+          ),
+          backgroundColor: theme.appBarTheme.backgroundColor,
+          centerTitle: true,
+          actions: [
+            IconButton(
+              icon: Icon(
+                Provider.of<ThemeProvider>(context).themeData.brightness == Brightness.dark
+                    ? Icons.wb_sunny
+                    : Icons.nightlight_round,
+                color: Colors.white,
+              ),
+              onPressed: () {
+                Provider.of<ThemeProvider>(context, listen: false).toggleTheme();
+              },
             ),
-            onPressed: () {
-              // Toggle the theme using the provider
-              Provider.of<ThemeProvider>(context, listen: false).toggleTheme();
-            },
-          )
-
-
-        ],
-
-
-
-
-      ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: EdgeInsets.all(16.0),
-          child: Center(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-              //  SizedBox(height: 20),
-                /*Text(
-                  "Welcome to Pariksha Madad Kendra 🎓",
-                  style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.deepPurple),
-                  textAlign: TextAlign.center,
-                ),*/
-               // SizedBox(height: 20),
-
-                isLoading
-                    ? Column(
-                  children: [
-                    CircularProgressIndicator(color: Colors.deepPurple),
-                    SizedBox(height: 10),
-                    Text("please wait...", style: TextStyle(fontSize: 16)),
-                  ],
-                )
-                    : Column(
-                  children: [
-                    buildDropdownCard("Select Stream", selectedStream, dropStream, (val) {
-                      setState(() => selectedStream = val);
-                    }),
-                    buildDropdownCard("Select Branch", selectedBranch, dropBranch, (val) {
-                      setState(() => selectedBranch = val);
-                    }),
-                    buildDropdownCard("Select Semester", selectedSemester, dropSemester, (val) {
-                      setState(() => selectedSemester = val);
-                    }),
-
-                    SizedBox(height: 30),
-
-                    GestureDetector(
-                      onTap: () {
-                        if (selectedStream != null && selectedBranch != null && selectedSemester != null) {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => SubjectsScreen(
-                                selectedStream: selectedStream!,
-                                selectedBranch: selectedBranch!,
-                                selectedSemester: selectedSemester!,
+          ],
+        ),
+        body: SingleChildScrollView(
+          child: Padding(
+            padding: EdgeInsets.all(16.0),
+            child: Center(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  isLoading
+                      ? Column(
+                    children: [
+                      CircularProgressIndicator(color: Colors.deepPurple),
+                      SizedBox(height: 10),
+                      Text("please wait...", style: TextStyle(fontSize: 16)),
+                    ],
+                  )
+                      : Column(
+                    children: [
+                      buildDropdownCard(
+                        "Select Stream",
+                        selectedStream,
+                        dropStream,
+                            (val) => setState(() => selectedStream = val),
+                        Key("dropdownStream"),
+                      ),
+                      buildDropdownCard(
+                        "Select Branch",
+                        selectedBranch,
+                        dropBranch,
+                            (val) => setState(() => selectedBranch = val),
+                        Key("dropdownBranch"),
+                      ),
+                      buildDropdownCard(
+                        "Select Semester",
+                        selectedSemester,
+                        dropSemester,
+                            (val) => setState(() => selectedSemester = val),
+                        Key("dropdownSemester"),
+                      ),
+                      SizedBox(height: 30),
+                      GestureDetector(
+                        key: Key("btnShowSubjects"),
+                        onTap: () {
+                          if (selectedStream != null &&
+                              selectedBranch != null &&
+                              selectedSemester != null) {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => SubjectsScreen(
+                                  selectedStream: selectedStream!,
+                                  selectedBranch: selectedBranch!,
+                                  selectedSemester: selectedSemester!,
+                                ),
                               ),
+                            );
+                          } else {
+                            showToast("Please select all fields!", Colors.red);
+                          }
+                        },
+                        child: AnimatedContainer(
+                          duration: Duration(milliseconds: 300),
+                          width: double.infinity,
+                          padding: EdgeInsets.symmetric(vertical: 15),
+                          decoration: BoxDecoration(
+                            gradient:
+                            LinearGradient(colors: [Colors.deepPurple, Colors.purpleAccent]),
+                            borderRadius: BorderRadius.circular(10),
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.deepPurple.withOpacity(0.3),
+                                blurRadius: 10,
+                                offset: Offset(0, 4),
+                              )
+                            ],
+                          ),
+                          child: Center(
+                            child: Text(
+                              "Show Subjects",
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold),
                             ),
-                          );
-                        } else {
-                          showToast("Please select all fields!", Colors.red);
-                        }
-                      },
-                      child: AnimatedContainer(
-                        duration: Duration(milliseconds: 300),
-                        width: double.infinity,
-                        padding: EdgeInsets.symmetric(vertical: 15),
-                        decoration: BoxDecoration(
-                          gradient: LinearGradient(colors: [Colors.deepPurple, Colors.purpleAccent]),
-                          borderRadius: BorderRadius.circular(10),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.deepPurple.withOpacity(0.3),
-                              blurRadius: 10,
-                              offset: Offset(0, 4),
-                            )
-                          ],
-                        ),
-                        child: Center(
-                          child: Text(
-                            "Show Subjects",
-                            style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
                           ),
                         ),
                       ),
-                    ),
-                  ],
-                ),
-              ],
+                    ],
+                  ),
+                ],
+              ),
             ),
           ),
         ),
@@ -244,19 +233,29 @@ class _MainDashboardState extends State<Studentviewmaterials> {
     );
   }
 
-  /// *🔹 Enhanced Dropdown UI (Card with Tap to Open BottomSheet)*
-  Widget buildDropdownCard(String label, String? selectedValue, List<String> items, Function(String) onSelected) {
+  Widget buildDropdownCard(
+      String label,
+      String? selectedValue,
+      List<String> items,
+      Function(String) onSelected,
+      Key? key,
+      ) {
     return GestureDetector(
-      onTap: () => showDropdownBottomSheet(title: label, items: items, selectedValue: selectedValue, onSelected: onSelected),
+      key: key,
+      onTap: () => showDropdownBottomSheet(
+        title: label,
+        items: items,
+        selectedValue: selectedValue,
+        onSelected: onSelected,
+      ),
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 10.0),
         child: Container(
           padding: EdgeInsets.symmetric(vertical: 16, horizontal: 20),
           decoration: BoxDecoration(
-         //   color: Colors.white,
             borderRadius: BorderRadius.circular(15),
             color: Theme.of(context).brightness == Brightness.dark
-                ? Colors.grey[800] // Dark grey for dark mode
+                ? Colors.grey[800]
                 : Colors.white,
             boxShadow: [
               BoxShadow(
@@ -269,7 +268,8 @@ class _MainDashboardState extends State<Studentviewmaterials> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(selectedValue ?? label, style:  Theme.of(context).textTheme.titleLarge),
+              Text(selectedValue ?? label,
+                  style: Theme.of(context).textTheme.titleLarge),
               Icon(Icons.arrow_drop_down, color: Colors.deepPurple),
             ],
           ),
